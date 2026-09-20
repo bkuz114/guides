@@ -128,9 +128,44 @@ $ ssh -T git@github.com
 Hi Ivan! You've successfully authenticated, but GitHub does not provide shell access.
 ```
 
-Alternatively, git push from an SSH configured repo. **The push should work automatically, without any credential prompting.**
+**If you see `Hi NAME!...`, your machine is now set up to authenticate with GitHub via SSH.** You can now perform Git operations (push, pull, fetch, clone) against any repository that uses an SSH remote (provided you have the necessary permissions on that repository).
 
----
+**Note**: If this is the first time you are connecting to `github.com` from this machine, SSH will prompt you to verify the host's authenticity when running the test command:
+
+```
+The authenticity of host 'github.com (140.82.112.4)' can't be established.
+ED25519 key fingerprint is SHA256:+DiY3wvvV6TuJJhbpZisF/zLDA0zPMSvHdkr4UvCOqU.
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])?
+```
+
+**Type `yes` and press Enter. Do not simply press Enter:** depending on your SSH version, the default option may be `[fingerprint]`, which displays the fingerprint instead of accepting the host key. After typing `yes`, you should see the success message shown above.
+
+**If you get `Host key verification failed`:**
+
+If you see the following message:
+
+```
+$ ssh -T git@github.com
+The authenticity of host 'github.com (140.82.116.4)' can't be established.
+ED25519 key fingerprint is: SHA256:+DiY3wvvV6TuJJhbpZisF/zLDA0zPMSvHdkr4UvCOqU
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])?
+Host key verification failed.
+```
+
+It means SSH did not add the public key of `github.com` to ~/.ssh/known_hosts`. Run the following to add it manually:
+
+```
+mkdir -p ~/.ssh
+ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
+```
+
+Then retry the `ssh -T git@github.com` test command. You should now see the success message:
+
+```
+Hi Ivan! You've successfully authenticated, but GitHub does not provide shell access.
+```
 
 ## HTTPS authentication
 
